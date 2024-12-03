@@ -1,0 +1,31 @@
+specVersion: 1.1.0
+description: Glacier NodeCtrl Testnet
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: NodeCtrlTestnet
+    network: opbnbtestnet
+    source:
+      address: "0x1f59347c5998a8bb5e5f3ba8ec20c030ca5dd1d2"
+      abi: NodeCtrl 
+      startBlock: 44464560
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - NodeActivateEvent
+      abis:
+        - name: NodeCtrl
+          file: ./abis/NodeCtrl.json
+      eventHandlers:
+        - event: NodeActivate(address,uint32)
+          handler: handleNodeActivate
+        - event: NodeReportVerification(address,bytes32,uint8)
+          handler: handleNodeReportVerification
+        - event: TeeReportAttestations(address,bytes32[],string[],uint256)
+          handler: handleTeeReportAttestations
+        - event: ConfirmVrfNodes(uint256,uint32[],uint256)
+          handler: handleConfirmVrfNodes
+      file: ./src/handlers/mapping.ts

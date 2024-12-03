@@ -1,0 +1,64 @@
+type NodeRegisterEvent @entity  {
+  id: ID!
+  node: Bytes!
+  txhash: Bytes!
+  timestamp: BigInt!
+}
+
+type NodeActivateEvent @entity(timeseries: true)  {
+  id: Int8!
+  timestamp: Timestamp!
+  node: Bytes!
+  listIndex: BigInt!
+  txhash: Bytes!
+}
+
+type DailyNodeActivate @aggregation(intervals: ["day"], source: "NodeActivateEvent")   {
+  id: Int8!
+  timestamp: Timestamp!
+  count: BigInt! @aggregate(fn: "count", cumulative: true)
+  daily: BigInt! @aggregate(fn: "count")
+}
+
+type NodeReportVerificationEvent @entity(timeseries: true) {
+  id: Int8!
+  timestamp: Timestamp!
+  node: Bytes!
+  attestationID: Bytes!
+  result:  Int!
+  txhash: Bytes!
+}
+
+type DailyNodeReportVerification @aggregation(intervals: ["day"], source: "NodeReportVerificationEvent")   {
+  id: Int8!
+  timestamp: Timestamp!
+  node: Bytes!
+  count: BigInt! @aggregate(fn: "count", cumulative: true)
+  daily: BigInt! @aggregate(fn: "count")
+}
+
+type TeeReportAttestationsEvent @entity(timeseries: true) {
+  id: Int8!
+  timestamp: Timestamp!
+  tee: Bytes!
+  attestationIDs: [Bytes!]!
+  attestationInfos: [String!]!
+  requestID:  BigInt!
+  txhash: Bytes!
+}
+
+type DailyTeeReportAttestation @aggregation(intervals: ["day"], source: "TeeReportAttestationsEvent")   {
+  id: Int8!
+  timestamp: Timestamp!
+  count: BigInt! @aggregate(fn: "count", cumulative: true)
+  daily: BigInt! @aggregate(fn: "count")
+}
+
+type ConfirmVrfNodesEvent @entity {
+  id: ID!
+  requestId:  BigInt!
+  vrfChosen: [ BigInt!]!
+  deadline:  BigInt!
+  txhash: Bytes!
+  timestamp: BigInt!
+}
